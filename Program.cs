@@ -16,7 +16,7 @@ namespace SyslogReceive
                 {
                     var localDate = DateTime.Now;
                     var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
-                    string logMessage = $"[{timestamp}] {address} : {message}";
+                    string logMessage = $"[{timestamp}][{address}] : {message}";
                     Console.WriteLine(logMessage);
                     sw.WriteLine(logMessage);
                 }
