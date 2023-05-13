@@ -23,8 +23,11 @@ namespace SyslogReceive
                     var fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read);
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        Console.WriteLine($"{address} : {message}");
-                        sw.WriteLine($"{address} : {message}");
+                        var localDate = DateTime.Now;
+                        var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
+                        string logMessage = $"[{timestamp}] {address} : {message}";
+                        Console.WriteLine(logMessage);
+                        sw.WriteLine(logMessage);
                     }
                 }
             }
