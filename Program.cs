@@ -20,14 +20,16 @@ namespace SyslogReceive
 
                     string address = remoteEP.Address.ToString();
                     string filename = address + ".txt";
-                    var fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read);
-                    using (StreamWriter sw = new StreamWriter(fs))
+                    using(FileStream fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read))
                     {
-                        var localDate = DateTime.Now;
-                        var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
-                        string logMessage = $"[{timestamp}] {address} : {message}";
-                        Console.WriteLine(logMessage);
-                        sw.WriteLine(logMessage);
+                        using (StreamWriter sw = new StreamWriter(fs))
+                        {
+                            var localDate = DateTime.Now;
+                            var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
+                            string logMessage = $"[{timestamp}] {address} : {message}";
+                            Console.WriteLine(logMessage);
+                            sw.WriteLine(logMessage);
+                        }
                     }
                 }
             }
