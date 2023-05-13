@@ -6,6 +6,23 @@ namespace SyslogReceive
 {
     internal class Program
     {
+        static void Log(IPEndPoint remoteEP, string message)
+        {
+            string address = remoteEP.Address.ToString();
+            string filename = address + ".txt";
+            using (FileStream fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    var localDate = DateTime.Now;
+                    var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
+                    string logMessage = $"[{timestamp}] {address} : {message}";
+                    Console.WriteLine(logMessage);
+                    sw.WriteLine(logMessage);
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             var localPort = 514;
@@ -18,18 +35,9 @@ namespace SyslogReceive
                     byte[] data = udp.Receive(ref remoteEP);
                     string message = System.Text.Encoding.UTF8.GetString(data);
 
-                    string address = remoteEP.Address.ToString();
-                    string filename = address + ".txt";
-                    using(FileStream fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read))
+                    if (remoteEP != null)
                     {
-                        using (StreamWriter sw = new StreamWriter(fs))
-                        {
-                            var localDate = DateTime.Now;
-                            var timestamp = localDate.ToString("yyyy/MM/dd HH:mm:ss.fff UTCzzz");
-                            string logMessage = $"[{timestamp}] {address} : {message}";
-                            Console.WriteLine(logMessage);
-                            sw.WriteLine(logMessage);
-                        }
+                        Log(remoteEP, message);
                     }
                 }
             }
