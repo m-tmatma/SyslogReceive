@@ -6,10 +6,10 @@ namespace SyslogReceive
 {
     internal class Program
     {
-        static void Log(IPEndPoint remoteEP, string message)
+        static void Log(string dir, IPEndPoint remoteEP, string message)
         {
             string address = remoteEP.Address.ToString();
-            string filename = address + ".txt";
+            string filename = Path.Join(dir, address + ".txt");
             using (FileStream fs = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.Read))
             {
                 using (StreamWriter sw = new StreamWriter(fs))
@@ -25,6 +25,11 @@ namespace SyslogReceive
 
         static void Main(string[] args)
         {
+            var localDate = DateTime.Now;
+            var timestamp = localDate.ToString("yyyyMMdd-HHmmss.fff");
+            var dir = $"log_{timestamp}";
+            Directory.CreateDirectory(dir);
+
             var localPort = 514;
             var localEP = new IPEndPoint(0, localPort);
             using (UdpClient udp = new UdpClient(localEP))
@@ -37,7 +42,7 @@ namespace SyslogReceive
 
                     if (remoteEP != null)
                     {
-                        Log(remoteEP, message);
+                        Log(dir, remoteEP, message);
                     }
                 }
             }
